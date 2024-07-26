@@ -1,15 +1,16 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use Illuminate\Support\Facades\Auth;
 use App\Models\Ad;
 use App\Models\AdsImage; 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB; 
 use Illuminate\Support\Facades\Log;
-class AdsimageController extends Controller
+
+class AdsImageController extends Controller
 {
-    
     private function getUserAdsData($userId)
     {
         // Count total ads for the user
@@ -37,22 +38,14 @@ class AdsimageController extends Controller
     
         return compact('ads', 'viewAdsCount', 'activeAdsCount', 'inactiveAdsCount');
     }
-    
 
-    /**
-     * Display a listing of the user's ads.
-     */
     public function index()
     {
         $user = Auth::user();
-    
         $data = $this->getUserAdsData($user->id);
-    
         return view('user.index', $data);
     }
-    
 
-    
     public function store(Request $request)
     {
         $validatedData = $request->validate([
@@ -62,9 +55,8 @@ class AdsimageController extends Controller
         try {
             if ($request->hasFile('image_path')) {
                 foreach ($request->file('image_path') as $image) {
-
-                $originalName = $image->getClientOriginalName();
-                $imageName = time() . '_' . $originalName;
+                    $originalName = $image->getClientOriginalName();
+                    $imageName = time() . '_' . $originalName;
                     $directory = public_path('assets/images/48');
                     $savedImage = AdsImage::create([
                         'ad_id' => '48', 
@@ -92,39 +84,22 @@ class AdsimageController extends Controller
         }
     }
 
-    
-
-
-    
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(adsimage $adsimage)
+    public function show(AdsImage $adsimage)
     {
         //
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(adsimage $adsimage)
+    public function edit(AdsImage $adsimage)
     {
         //
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, adsimage $adsimage)
+    public function update(Request $request, AdsImage $adsimage)
     {
         //
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(adsimage $adsimage)
+    public function destroy(AdsImage $adsimage)
     {
         //
     }

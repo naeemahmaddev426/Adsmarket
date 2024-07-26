@@ -1,7 +1,7 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthenticatedSessionController;
 use App\Http\Controllers\post_adController;
 use App\Http\Controllers\Auth\CustomRegisteredUserController;
@@ -40,7 +40,7 @@ Route::get('/user/index', function () {
 
     // Check if user role is 'user'
     if ($user && $user->role === 'user') {
-        return app()->call('App\Http\Controllers\AdsImageController@index');
+        return app()->call([AdsImageController::class, 'index']);
     }
 
     // Redirect to the admin index if role is not 'user'
@@ -83,7 +83,7 @@ Route::get('/admin/index', function () {
 
     // Check if user role is 'admin'
     if ($user && $user->role === 'admin') {
-        return app()->call('App\Http\Controllers\AdminController@index');
+        return app()->call('App\Http\Controllers\AdminController');
     }
 
     // Redirect to the user index if role is not 'admin'

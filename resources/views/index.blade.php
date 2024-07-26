@@ -1,9 +1,6 @@
 <x-app-layout>
   <style>
-    .card-body {
-      padding: 15px;
-    }
-
+ 
     .text2 {
       font-size: 13px;
     }

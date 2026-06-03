@@ -57,6 +57,7 @@ class Ad extends Model
         'pro_sale_portion_floor_level',
         'no_storeys',
         'model_bike',
+        'make_bike2',
         'engine_type',
         'engine_capacity',
         'ignition_type',
@@ -68,6 +69,7 @@ class Ad extends Model
         'review_name',
         'phone_no',
         'ad_status',
+        'deliverable',
         
     ];
 
@@ -78,10 +80,20 @@ class Ad extends Model
 
 public function images()
 {
-    return $this->hasMany(AdsImage::class, 'ad_id', 'id');
+    return $this->hasMany(adsimage::class, 'ad_id', 'id');
 }
 public function category()
     {
         return $this->belongsTo(Category::class, 'category_id'); // Adjust based on your schema
+    }
+   
+
+public function subcategories()
+{
+    return $this->belongsToMany(SubCategory::class, 'ad_subcategory', 'ad_id', 'subcategory_id');
+}
+public function favoriteViews()
+    {
+        return $this->hasMany(FavoriteView::class);
     }
 }

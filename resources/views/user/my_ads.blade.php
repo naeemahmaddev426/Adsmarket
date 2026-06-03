@@ -5,7 +5,7 @@
       <h1>Dashboard</h1>
       <nav>
         <ol class="breadcrumb">
-          <li class="breadcrumb-item"><a href="/user/index">Home</a></li>
+          <li class="breadcrumb-item"><a href="{{ url('/') }}">Home</a></li>
           <li class="breadcrumb-item active">My Ads</li>
         </ol>
       </nav>
@@ -56,7 +56,7 @@
 
   <footer id="footer" class="footer pb-0 mt-4 fixed-bottom" style="background-color:#fdfcfc !important;">
     <div class="container copyright text-center  border-top pt-2 mb-0 pb-2 ">
-      <p class="pb-0 mb-0">© 2024<span> Copyright</span> <a href="index.html" class="link"> <strong
+      <p class="pb-0 mb-0">© 2024<span> Copyright</span> <a href="{{ url('/') }}" class="link"> <strong
             class="px-1 sitename">Ads Market</strong></a><span>All
           Rights Reserved</span></p>
 

@@ -1,0 +1,2 @@
+<x-label_title for="brand" class="label-span mt-2">Brand</x-label_title>
+<x-brand_tablets name="brand" :options="['Apple', 'Samsung', 'Other Tablets', 'Lenovo', 'Huawei', 'Others', 'Dany Tabs', 'Amazon', 'Asus', 'Dell', 'Alcatel', 'Huion']"  value="{{ old('brand', $ad->brand) }}" placeholder="Select Brand" />

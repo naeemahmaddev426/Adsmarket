@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\Ad;
 use App\Models\User;
 use App\Models\AdsImage; 
+use App\Models\Contact; 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\DB; 
@@ -29,14 +30,24 @@ class AdController extends Controller
         return compact('ads', 'viewAdsCount', 'activeAdsCount', 'category');
     }
 
-    public function showCategory()
+   public function showCategory()
     {
         // Define the category name you want to filter by
         $categoryName = 'Mobiles'; // Adjust this as needed
 
         // Fetch ads where the category_name matches the specified category, case-insensitive
         $ads = Ad::where('category_name', 'like', $categoryName)->get();
+        foreach ($ads as $ad) {
+            // Sum views from favorite_view table for this ad
+            $ad->totalViews = DB::table('favorite_view')
+                ->where('ad_id', $ad->id)
+                ->sum('view');
 
+            // Sum phone views from the 'phone_view' column in favorite_view table for this ad
+            $ad->totalPhoneViews = DB::table('favorite_view')
+                ->where('ad_id', $ad->id)
+                ->sum('phone_view');
+        }
         // Pass the ads and category name to the view
         return view('admin.mobiles', [
             'ads' => $ads,
@@ -50,7 +61,17 @@ class AdController extends Controller
 
         // Fetch ads where the category_name matches the specified category, case-insensitive
         $ads = Ad::where('category_name', 'like', $categoryName)->get();
+        foreach ($ads as $ad) {
+            // Sum views from favorite_view table for this ad
+            $ad->totalViews = DB::table('favorite_view')
+                ->where('ad_id', $ad->id)
+                ->sum('view');
 
+            // Sum phone views from the 'phone_view' column in favorite_view table for this ad
+            $ad->totalPhoneViews = DB::table('favorite_view')
+                ->where('ad_id', $ad->id)
+                ->sum('phone_view');
+        }
         // Pass the ads and category name to the view
         return view('admin.vehicles', [
             'ads' => $ads,
@@ -64,7 +85,17 @@ class AdController extends Controller
 
         // Fetch ads where the category_name matches the specified category, case-insensitive
         $ads = Ad::where('category_name', 'like', $categoryName)->get();
+        foreach ($ads as $ad) {
+            // Sum views from favorite_view table for this ad
+            $ad->totalViews = DB::table('favorite_view')
+                ->where('ad_id', $ad->id)
+                ->sum('view');
 
+            // Sum phone views from the 'phone_view' column in favorite_view table for this ad
+            $ad->totalPhoneViews = DB::table('favorite_view')
+                ->where('ad_id', $ad->id)
+                ->sum('phone_view');
+        }
         // Pass the ads and category name to the view
         return view('admin.property_sale', [
             'ads' => $ads,
@@ -78,7 +109,17 @@ class AdController extends Controller
 
         // Fetch ads where the category_name matches the specified category, case-insensitive
         $ads = Ad::where('category_name', 'like', $categoryName)->get();
+        foreach ($ads as $ad) {
+            // Sum views from favorite_view table for this ad
+            $ad->totalViews = DB::table('favorite_view')
+                ->where('ad_id', $ad->id)
+                ->sum('view');
 
+            // Sum phone views from the 'phone_view' column in favorite_view table for this ad
+            $ad->totalPhoneViews = DB::table('favorite_view')
+                ->where('ad_id', $ad->id)
+                ->sum('phone_view');
+        }
         // Pass the ads and category name to the view
         return view('admin.property_rent', [
             'ads' => $ads,
@@ -92,7 +133,17 @@ class AdController extends Controller
 
         // Fetch ads where the category_name matches the specified category, case-insensitive
         $ads = Ad::where('category_name', 'like', $categoryName)->get();
+        foreach ($ads as $ad) {
+            // Sum views from favorite_view table for this ad
+            $ad->totalViews = DB::table('favorite_view')
+                ->where('ad_id', $ad->id)
+                ->sum('view');
 
+            // Sum phone views from the 'phone_view' column in favorite_view table for this ad
+            $ad->totalPhoneViews = DB::table('favorite_view')
+                ->where('ad_id', $ad->id)
+                ->sum('phone_view');
+        }
         // Pass the ads and category name to the view
         return view('admin.bikes', [
             'ads' => $ads,
@@ -106,7 +157,17 @@ class AdController extends Controller
 
         // Fetch ads where the category_name matches the specified category, case-insensitive
         $ads = Ad::where('category_name', 'like', $categoryName)->get();
+        foreach ($ads as $ad) {
+            // Sum views from favorite_view table for this ad
+            $ad->totalViews = DB::table('favorite_view')
+                ->where('ad_id', $ad->id)
+                ->sum('view');
 
+            // Sum phone views from the 'phone_view' column in favorite_view table for this ad
+            $ad->totalPhoneViews = DB::table('favorite_view')
+                ->where('ad_id', $ad->id)
+                ->sum('phone_view');
+        }
         // Pass the ads and category name to the view
         return view('admin.furniture', [
             'ads' => $ads,
@@ -120,11 +181,38 @@ class AdController extends Controller
 
         // Fetch ads where the category_name matches the specified category, case-insensitive
         $ads = Ad::where('category_name', 'like', $categoryName)->get();
+        foreach ($ads as $ad) {
+            // Sum views from favorite_view table for this ad
+            $ad->totalViews = DB::table('favorite_view')
+                ->where('ad_id', $ad->id)
+                ->sum('view');
 
+            // Sum phone views from the 'phone_view' column in favorite_view table for this ad
+            $ad->totalPhoneViews = DB::table('favorite_view')
+                ->where('ad_id', $ad->id)
+                ->sum('phone_view');
+        }
         // Pass the ads and category name to the view
         return view('admin.fashion', [
             'ads' => $ads,
             'category' => $categoryName
         ]);
     }
+    public function detail_contact()
+    {
+        $contacts = Contact::select('name', 'email', 
+            \DB::raw('MAX(subject) as subject'), 
+            \DB::raw('MAX(message) as message')    
+        )
+        ->groupBy('name', 'email')
+        ->get();
+    
+        // Pass the unique contacts to the view
+        return view('admin/contact_user_detail', [
+            'contacts' => $contacts,
+        ]);
+    }
+    
+
+    
 }

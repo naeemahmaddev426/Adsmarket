@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Storage;
 use App\Models\adsimage;
 use App\Models\SubCategoryNameType;
 use App\Models\SubCategory;
+use App\Notifications\AdUpdatedOrCreated;
 use Illuminate\Support\Facades\Crypt;
 use Intervention\Image\Facades\Image;
 
@@ -41,18 +42,22 @@ class post_adController extends Controller
         return view('post_ad', compact('categories'));
     }
     
-
+    public function main()
+    {
+        $categories = Category::all(); // Fetch all categories
+        return view('post_ad', compact('categories'));
+    }
 public function store(Request $request)
 {
     try {
-        // Check if the user is authenticated
+        // Ensure the user is authenticated
         if (!auth()->check()) {
-            Log::error('User not authenticated.');
             return redirect()->route('login')->with('error', 'You need to be logged in to perform this action.');
         }
-        
-        // Retrieve authenticated user ID
-        $userId = auth()->id();
+
+        // Retrieve authenticated user
+        $user = auth()->user();
+        $userId = $user->id;
         Log::info('Authenticated User ID: ' . $userId);
 
         // Validate incoming request data
@@ -75,11 +80,9 @@ public function store(Request $request)
             'furnished' => 'nullable|string|max:255',
             'pro_rent_house_bedroom' => 'nullable|string|max:255',
             'pro_rent_house_bathroom' => 'nullable|string|max:255',
-            
             'pro_rent_appart_bedroom' => 'nullable|string|max:255',
             'pro_rent_apart_bathroom' => 'nullable|string|max:255',
             'pro_rent_appart_floor' => 'nullable|string|max:255',
-
             'bedroom2' => 'nullable|string|max:255',
             'bathroom2' => 'nullable|string|max:255',
             'floor_level2' => 'nullable|string|max:255',
@@ -88,9 +91,8 @@ public function store(Request $request)
             'bedroom_vacation_rent' => 'nullable|string|max:255',
             'bathroom_vacation_rent' => 'nullable|string|max:255',
             'make_bike' => 'nullable|string|max:255',
-            // 'model_bike.*' => 'nullable|string|max:255',
-
-            'pro_sale_house_bedroom' => 'nullable|string', 
+            'make_bike2' => 'nullable|string|max:255',
+            'pro_sale_house_bedroom' => 'nullable|string',
             'pro_sale_house_bathroom' => 'nullable|string',
             'pro_sale_appart_bedroom' => 'nullable|string',
             'pro_sale_appart_bathroom' => 'nullable|string',
@@ -102,7 +104,6 @@ public function store(Request $request)
             'pro_sale_portion_bathroom' => 'nullable|string|max:255',
             'pro_sale_portion_floor_level' => 'nullable|string|max:255',
             'no_storeys' => 'nullable|string|max:255',
-        
             'engine_type' => 'nullable|string|max:255',
             'engine_capacity' => 'nullable|string|max:255',
             'ignition_type' => 'nullable|string|max:255',
@@ -110,17 +111,29 @@ public function store(Request $request)
             'registration_city' => 'nullable|string|max:255',
             'product' => 'nullable|string|max:255',
             'price' => 'nullable|string|max:255',
-            'location' => 'required|string|max:255',
+            'phone_no' => 'nullable|numeric',
+            'location' => 'nullable|string|max:255',
             'ad_status' => 'nullable|string|max:255',
-            'image_path.*' => 'required|image|mimes:jpeg,png,jpg,gif,svg',
+            'deliverable' => 'nullable|string|max:255',
+            'image_path.*' => 'required|image|mimes:jpeg,png,jpg,gif,svg,jfif,webp',
         ]);
-
+        $phoneNo = $request->input('phone_no');
+            if ($phoneNo && !str_starts_with($phoneNo, '+92')) {
+                $phoneNo = '+92' . $phoneNo;
+            }
+    
+            // Save phone number if user is logged in with Google and phone_no is not already saved
+            if ($user->google_id && !$user->phone_no && $phoneNo) {
+                $user->phone_no = $phoneNo;
+                $user->save();
+            }
         // Default ad status to 'active' if not provided
         $validatedData['ad_status'] = $validatedData['ad_status'] ?? 'active';
+    
         // Create a new ad record in the database
         $ad = new Ad();
         $ad->users_id = $userId;
-        $ad->title = $validatedData['title'];
+        $ad->title = $validatedData['title'] ?? null;
         $ad->description = $validatedData['description'] ?? null;
         $ad->category_name = $validatedData['category_name'] ?? null;
         $ad->sub_category_name = $validatedData['sub_category_name'] ?? null;
@@ -143,11 +156,9 @@ public function store(Request $request)
         $ad->pro_sale_appart_bedroom = $validatedData['pro_sale_appart_bedroom'] ?? null;
         $ad->pro_sale_appart_bathroom = $validatedData['pro_sale_appart_bathroom'] ?? null;
         $ad->construction_state_new = $validatedData['construction_state_new'] ?? null;
-
         $ad->pro_rent_appart_bedroom = $validatedData['pro_rent_appart_bedroom'] ?? null;
         $ad->pro_rent_apart_bathroom = $validatedData['pro_rent_apart_bathroom'] ?? null;
         $ad->pro_rent_appart_floor = $validatedData['pro_rent_appart_floor'] ?? null;
-       
         $ad->bedroom2 = $validatedData['bedroom2'] ?? null;
         $ad->bathroom2 = $validatedData['bathroom2'] ?? null;
         $ad->floor_level2 = $validatedData['floor_level2'] ?? null;
@@ -156,8 +167,7 @@ public function store(Request $request)
         $ad->bedroom_vacation_rent = $validatedData['bedroom_vacation_rent'] ?? null;
         $ad->bathroom_vacation_rent = $validatedData['bathroom_vacation_rent'] ?? null;
         $ad->make_bike = $validatedData['make_bike'] ?? null;
-       
-
+        $ad->make_bike2 = $validatedData['make_bike2'] ?? null;
         $ad->construction_state_new_rent_house = $validatedData['construction_state_new_rent_house'] ?? null;
         $ad->pro_sale_appart_floor_level = $validatedData['pro_sale_appart_floor_level'] ?? null;
         $ad->pro_sale_shope_floor_level = $validatedData['pro_sale_shope_floor_level'] ?? null;
@@ -165,8 +175,6 @@ public function store(Request $request)
         $ad->pro_sale_portion_bathroom = $validatedData['pro_sale_portion_bathroom'] ?? null;
         $ad->pro_sale_portion_floor_level = $validatedData['pro_sale_portion_floor_level'] ?? null;
         $ad->no_storeys = $validatedData['no_storeys'] ?? null;
-        // $ad->model_bike = implode('', $validatedData['model_bike'] ?? []);
-        // $ad->model_bike = $validatedData['model_bike'] ?? null;
         $ad->engine_type = $validatedData['engine_type'] ?? null;
         $ad->engine_capacity = $validatedData['engine_capacity'] ?? null;
         $ad->ignition_type = $validatedData['ignition_type'] ?? null;
@@ -176,55 +184,51 @@ public function store(Request $request)
         $ad->price = $validatedData['price'] ?? null;
         $ad->location = $validatedData['location'] ?? null;
         $ad->ad_status = $validatedData['ad_status'];
-
+        $ad->deliverable = $validatedData['deliverable']?? null;
+    
         $ad->save();
 
-        // Log success message with ad details
-        Log::info('Ad created successfully: ', $ad->toArray());
+        Log::info('Ad created successfully: ' . $ad->id);
 
-        // Handle file uploads and save to ads_images table
+        // Notify the user
+        $user->notify(new AdUpdatedOrCreated($ad));
+        Log::info('Notification sent to user.');
+
+        // Handle file uploads
         if ($request->hasFile('image_path')) {
-            foreach ($request->file('image_path') as $image) {
-                $originalName = $image->getClientOriginalName();
-                $imageName = time() . '_' . $originalName;
-                $directory = public_path('assets/images/' . $userId);
+            $destinationPath = public_path('assets/images/' . $userId); // Save in the user's folder
 
-                // Create directory if it doesn't exist
-                if (!file_exists($directory)) {
-                    mkdir($directory, 0755, true);
-                }
-
-                // Save image record to database
-                $savedImage = AdsImage::create([
-                    'ad_id' => $ad->id,
-                    'image_path' => 'assets/images/' . $userId . '/' . $imageName,
-                ]);
-
-                // Move uploaded image to storage
-                if ($savedImage) {
-                    $image->move($directory, $imageName);
-                    Log::info('Image saved: ' . $imageName);
-                } else {
-                    Log::error('Failed to save image to database.');
-                }
+            // Ensure the directory exists
+            if (!file_exists($destinationPath)) {
+                mkdir($destinationPath, 0777, true);
             }
 
-            // Redirect back with success message
-            return redirect()->back()->with('success', 'Ad and images uploaded successfully.');
-        } else {
-            Log::error('No images found in the request.');
-            return redirect()->back()->withErrors(['No images found in the request.']);
+            foreach ($request->file('image_path') as $image) {
+                $originalName = $image->getClientOriginalName();
+                $fileName = time() . '-' . $originalName;
+                $image->move($destinationPath, $fileName);
+
+                // Save image details in ads_images table
+                AdsImage::create([
+                    'ad_id' => $ad->id,
+                    'image_path' => 'assets/images/' . $userId . '/' . $fileName,
+                    'original_name' => $originalName,
+                ]);
+            }
         }
-    } catch (ValidationException $e) {
-        // Handle validation errors
-        Log::error('Validation error: ', $e->errors());
-        return redirect()->back()->withErrors($e->errors())->withInput();
+
+        // Redirect with success message
+        return redirect()->route('index')->with('success', 'Ad and images uploaded successfully.');
     } catch (\Exception $e) {
-        // Handle unexpected errors
-        Log::error('An unexpected error occurred: ' . $e->getMessage());
-        return redirect()->back()->with('error', 'An unexpected error occurred. Please try again.')->withInput();
+        // Log the error with details for debugging
+        Log::error('Error creating ad: ', [
+            'message' => $e->getMessage(),
+            'trace' => $e->getTraceAsString(),
+        ]);
+
+        // Redirect back with error message
+        return redirect()->back()->withInput()->with('error', 'An error occurred while posting your ad. Please try again.');
     }
 }
-
 
 }

@@ -3,7 +3,9 @@
     #main-nav {
       display: none;
     }
-
+    .main-nav {
+			display: none;
+		}
     .component {
       display: none;
     }
@@ -27,10 +29,10 @@
       <div class="col-lg-12 col-12 col-md-12 mx-auto mb-5">
         <div class="top-bar bg-light p-2">
           <div class="logo">
-            <a href="/" class="home-link me-4 text-decoration-none text-dark">
+            <a href="{{ url('/') }}" class="home-link me-4 text-decoration-none text-dark">
               <i class="fas fa-arrow-left fa-lg pt-4"></i>
             </a>
-            <a class="navbar-brand" href="/">
+            <a class="navbar-brand" href="{{ url('/') }}">
               <img src="{{asset('assets/images/logo.svg')}}" class="lazyload" width="200px" height="60px">
             </a>
             @auth
@@ -45,8 +47,10 @@
             <h4 class="text-center heading-post text-uppercase">POST YOUR AD</h4>
           </div>
           <div class="row">
+			  
             <input type="hidden" id="category_name" name="category_name" value="{{ session('category_name', old('category_name')) }}">
             <input type="hidden" id="sub_category_name" name="sub_category_name" value="{{ session('sub_category_name', old('sub_category_name')) }}">
+				 
             <div class="col-md-10 col-12 mx-auto">
               <div class="row border border-1">
                 <div class="col-md-12 col-12  mx-auto">
@@ -107,20 +111,15 @@
                       </div>
                   </div>
               </div>
-
             </div>
-            </div>
-          </form>
         </div>
       </div>
-
-
       <footer id="footer" class="footer mt-5" style=" position: fixed;bottom: 0;width: 100%;background-color: #fff;z-index: 999;">
         <div class="container copyright text-center border-top pt-2 pb-2">
-          <p class="mb-0">© 2024 <span>Copyright</span> <a href="/" class="link"><strong class="px-1 sitename">Ads Market</strong></a><span>All Rights Reserved</span></p>
+          <p class="mb-0">© 2024 <span>Copyright</span> <a href="{{ url('/') }}" class="link"><strong class="px-1 sitename">Ads Market</strong></a><span>All Rights Reserved</span></p>
         </div>
       </footer>
-
-    </div>
-  </div>
+		</div>
+	  </div>
+   </div>
 </x-app-layout>

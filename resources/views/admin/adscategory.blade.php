@@ -13,8 +13,8 @@
     <div class="pagetitle">
       <nav>
         <ol class="breadcrumb">
-          <li class="breadcrumb-item"><a href="/">Home</a></li>
-          <li class="breadcrumb-item active"><a href="admin.adscategory">Ad Category</a></li>
+          <li class="breadcrumb-item"><a href="{{ url('/') }}">Home</a></li>
+          <li class="breadcrumb-item active"><a href="adscategory">Ad Category</a></li>
         </ol>
       </nav>
     </div>
@@ -110,7 +110,7 @@
   </main>
   <footer id="footer" class="footer pb-0 mt-4 fixed-bottom" style="background-color:#fdfcfc !important;">
     <div class="container copyright text-center  border-top pt-2 mb-0 pb-2 ">
-      <p class="pb-0 mb-0">© 2024<span> Copyright</span> <a href="/" class="link"> <strong class="px-1 sitename">Ads Market</strong></a><span>All Rights Reserved</span></p>
+      <p class="pb-0 mb-0">© 2024<span> Copyright</span> <a href="{{ url('/') }}" class="link"><strong class="px-1 sitename">Ads Market</strong></a><span>All Rights Reserved</span></p>
     </div>
   </footer>
 </x-app-admin-layout>

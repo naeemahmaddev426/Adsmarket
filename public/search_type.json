@@ -1,0 +1,286 @@
+[
+    {
+        "name": "Mobiles",
+        "id": 1
+    },
+    {
+        "name": "Tablets",
+        "id": 2
+    },
+    {
+        "name": "Accessories",
+        "id": 3
+    },
+    {
+        "name": "Charging_Cables",
+        "id": 4
+    },
+    {
+        "name": "Converters",
+        "id": 5
+    },
+    {
+        "name": "Chargers",
+        "id": 6
+    },
+    {
+        "name": "Screen",
+        "id": 7
+    },
+    {
+        "name": "Smart_watch",
+        "id": 8
+    },
+    {
+        "name": "Mobiles_phones",
+        "id": 9
+    },
+    {
+        "name": "Vehicles",
+        "id": 10
+    },
+    {
+        "name": "Car",
+        "id": 11
+    },
+    {
+        "name": "Cars_on_Installments",
+        "id": 12
+    },
+    {
+        "name": "Cars_Accessories",
+        "id": 13
+    },
+    {
+        "name": "Spare_Parts",
+        "id": 14
+    },
+    {
+        "name": "Buses_Vans_Trucks",
+        "id": 15
+    },
+    {
+        "name": "Rickshaw_Chingchi",
+        "id": 16
+    },
+    {
+        "name": "Boats",
+        "id": 17
+    },
+    {
+        "name": "Tractors_Trailers",
+        "id": 18
+    },
+    {
+        "name": "Property_for_sale",
+        "id": 19
+    },
+    {
+        "name": "Land_&_Plots",
+        "id": 20
+    },
+    {
+        "name": "Houses",
+        "id": 21
+    },
+    {
+        "name": "Apartments_&_Flats",
+        "id": 22
+    },
+    {
+        "name": "Shops_Offices_Commercial_Space",
+        "id": 23
+    },
+    {
+        "name": "Portions_&_Floors",
+        "id": 24
+    },
+    {
+        "name": "Property_for_rent",
+        "id": 25
+    },
+    {
+        "name": "Houses_for_Rent",
+        "id": 26
+    },
+    {
+        "name": "Apartments_&_Flats_Rent",
+        "id": 27
+    },
+    {
+        "name": "Portions_&_Floors_Rent",
+        "id": 28
+    },
+    {
+        "name": "Shops_Offices_Commercial_Space_Rent",
+        "id": 29
+    },
+    {
+        "name": "Rooms",
+        "id": 30
+    },
+    {
+        "name": "Roommates_Paying_Guests",
+        "id": 31
+    },
+    {
+        "name": "Vacation_Rentals_Guest_Houses",
+        "id": 32
+    },
+    {
+        "name": "Land_&_Plots_Rent",
+        "id": 33
+    },
+    {
+        "name": "Bikes",
+        "id": 34
+    },
+    {
+        "name": "Motorcycles",
+        "id": 35
+    },
+    {
+        "name": "Electric_Bikes",
+        "id": 36
+    },
+    {
+        "name": "Sports_Heavy_Bikes",
+        "id": 37
+    },
+    {
+        "name": "Bike_Spare_Parts",
+        "id": 38
+    },
+    {
+        "name": "Air_Filters",
+        "id": 39
+    },
+    {
+        "name": "Carburetors",
+        "id": 40
+    },
+    {
+        "name": "Bearings",
+        "id": 41
+    },
+    {
+        "name": "Side_Mirrors",
+        "id": 42
+    },
+    {
+        "name": "Motorcycle_Batteries",
+        "id": 43
+    },
+    {
+        "name": "Switches",
+        "id": 44
+    },
+    {
+        "name": "Bicycles",
+        "id": 45
+    },
+    {
+        "name": "Road_Bikes",
+        "id": 46
+    },
+    {
+        "name": "Mountain_Bikes",
+        "id": 47
+    },
+    {
+        "name": "Electric_Bicycles",
+        "id": 48
+    },
+    {
+        "name": "Furniture_Home_Decor",
+        "id": 49
+    },
+    {
+        "name": "Sofa_Chairs",
+        "id": 50
+    },
+    {
+        "name": "Sofas",
+        "id": 51
+    },
+    {
+        "name": "Sofa_Beds",
+        "id": 52
+    },
+    {
+        "name": "Office_Furniture",
+        "id": 53
+    },
+    {
+        "name": "Office_Chairs",
+        "id": 54
+    },
+    {
+        "name": "Office_Sofas",
+        "id": 55
+    },
+    {
+        "name": "Office_Tables",
+        "id": 56
+    },
+    {
+        "name": "Fashion_Beauty",
+        "id": 57
+    },
+    {
+        "name": "Fashion_Accessories",
+        "id": 58
+    },
+    {
+        "name": "Caps",
+        "id": 59
+    },
+    {
+        "name": "Scarves",
+        "id": 60
+    },
+    {
+        "name": "Gloves",
+        "id": 61
+    },
+    {
+        "name": "Makeup",
+        "id": 62
+    },
+    {
+        "name": "Eyes",
+        "id": 63
+    },
+    {
+        "name": "Brushes",
+        "id": 64
+    },
+    {
+        "name": "Face",
+        "id": 65
+    },
+    {
+        "name": "Skin_Hair",
+        "id": 66
+    },
+    {
+        "name": "Hair_Care",
+        "id": 67
+    },
+    {
+        "name": "Skin_Care",
+        "id": 68
+    },
+    {
+        "name": "Wedding",
+        "id": 69
+    },
+    {
+        "name": "Bridals",
+        "id": 70
+    },
+    {
+        "name": "Grooms",
+        "id": 71
+    }
+]

@@ -6,10 +6,13 @@ use App\Models\Ad;
 use App\Models\User;
 use App\Models\AdsImage;
 use App\Models\Contact; 
+use App\Models\Banner; 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB; 
 use Illuminate\Support\Facades\Log;
+use App\Models\FavoriteView;
 use Illuminate\Support\Facades\Crypt;
+
 use Illuminate\Contracts\Encryption\DecryptException;
 
 // use App\Mail\ContactFormSubmitted;
@@ -60,11 +63,9 @@ public function adminIndex(){
 
     public function showContactForm()
     {
-        return view('contact');
+        $contactBanners = Banner::where('type', 'contact')->get();
+        return view('contact', compact('contactBanners'));
     }
-
-    
-    
   
     public function save(Request $request)
     {
@@ -77,7 +78,7 @@ public function adminIndex(){
         ]);
 
         try {
-            // Create a new Contact model instance
+            
             $contact = new Contact();
             $contact->name = $validatedData['name'];
             $contact->email = $validatedData['email'];
@@ -111,46 +112,79 @@ public function adminIndex(){
     
     
 
-    public function adsall($encryptedUserId)
+    public function adsall($userId)
 {
     try {
-        $userId = Crypt::decrypt($encryptedUserId);
+        // Find the user directly by ID
         $user = User::findOrFail($userId);
+
+        // Retrieve the ads for the user
         $ads = Ad::where('users_id', $userId)->get();
 
+        // Calculate total views and phone views from the favorite_view table for each ad
+        foreach ($ads as $ad) {
+            // Sum views from favorite_view table for this ad
+            $ad->totalViews = DB::table('favorite_view')
+                ->where('ad_id', $ad->id)
+                ->sum('view');
+
+            // Sum phone views from the 'phone_view' column in favorite_view table for this ad
+            $ad->totalPhoneViews = DB::table('favorite_view')
+                ->where('ad_id', $ad->id)
+                ->sum('phone_view');
+        }
         return view('admin.user_ads', [
             'user' => $user,
             'ads' => $ads,
         ]);
-    } catch (DecryptException $e) {
+    } catch (ModelNotFoundException $e) {
         return redirect()->route('admin.index')->with('error', 'Invalid User ID');
     }
 }
 
 public function updateAdStatus(Request $request)
 {
-    // Validate input
+    // Validate input with all possible status values
     $validatedData = $request->validate([
-        'ads.*.status' => 'required|string|in:Active,Inactive',
+        'ads.*.status' => 'required|string|in:active,inactive,Not_posted,disable',
         'ads.*.id' => 'required|integer|exists:ads,id',
         'userId' => 'required|integer|exists:users,id',
     ]);
 
-    // Update each ad status
+    // Update each ad's status
     foreach ($validatedData['ads'] as $adData) {
-        Ad::where('id', $adData['id'])->update(['ad_status' => $adData['status']]);
+        $ad = Ad::find($adData['id']);
+        if ($ad->ad_status !== $adData['status']) {  // Update only if status changed
+            $ad->update(['ad_status' => $adData['status']]);
+        }
     }
 
-    // Redirect with success message
+    // Redirect back with success message
     return redirect()->route('admin.user_ads', ['userId' => $request->userId])
                      ->with('success', 'Statuses updated successfully!');
 }
 
-    public function create($id)
+   public function create($id)
 {
-    $decryptedId = decrypt($id);
-    $ad = Ad::with('images')->findOrFail($decryptedId);
-    return view('product_detail', compact('ad'));
+    $adId = decrypt($id);
+    
+    // Fetch the ad details along with related images
+    $ad = Ad::with('images')->findOrFail($adId);
+
+    // Fetch banners for product detail page
+    $productDetailBanners = Banner::where('type', 'product_detail')->get();
+
+    // Fetch all records from the favorite_view table for the ad
+    $favoriteViews = FavoriteView::where('ad_id', $adId)->get();
+
+    // Check if the user has liked the ad
+    $userLiked = $favoriteViews->where('users_id', auth()->id())->isNotEmpty();
+
+    // Calculate total views and phone views
+    $totalViews = $favoriteViews->sum('view');  // Assuming 'view_count' holds the number of views
+    $totalPhoneViews = $favoriteViews->sum('phone_view');  // Assuming 'phone_view_count' holds the number of phone views
+
+    return view('product_detail', compact('ad', 'productDetailBanners','userLiked', 'favoriteViews', 'totalViews', 'totalPhoneViews'));
 }
 
 }

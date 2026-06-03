@@ -274,6 +274,44 @@ a {
   padding: 10px;
 }
 
+.input-container {
+  position: relative;
+  width: 100%;
+}
+
+.input-container input {
+  width: calc(100% - 24px);
+  /* Leave space for the icon */
+  padding-right: 24px;
+}
+
+.input-icon {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  color: #888;
+  /* Adjust color as needed */
+}
+
+#languages {
+  display: none;
+  /* Hide by default */
+  position: absolute;
+  width: 100%;
+  max-height: 200px;
+  overflow-y: auto;
+  border: 1px solid #ccc;
+  background-color: white;
+  z-index: 1000;
+}
+
+.input-container input:focus+#languages {
+  display: block;
+  /* Show when input is focused */
+}
+
 .swiper-button-prev,
 .swiper-button-next {
   position: absolute;
@@ -1396,8 +1434,6 @@ input:checked+section.box .box-title:before {
 
 .input-check input[type="radio"] {
   appearance: none;
-  -webkit-appearance: none;
-  -moz-appearance: none;
   padding: 10px 6px;
   margin-right: 10px;
   margin-top: 10px;
@@ -1405,12 +1441,8 @@ input:checked+section.box .box-title:before {
   border: 2px solid lightgrey;
   border-radius: 5px;
   cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
   font-size: 13px;
   transition: all 0.3s ease;
-
 }
 
 .input-check input[type="radio"]::before {
@@ -1418,18 +1450,25 @@ input:checked+section.box .box-title:before {
   display: block;
   width: 100%;
   text-align: center;
-  color: black;
+
 }
 
-.input-check input[type="radio"]:checked {
+.input-check .wrapper .checked {
   border-color: #545f8b;
   background: #545f8b;
   color: #fff;
 }
 
+/* .input-check input[type="radio"]:checked {
+  border-color: #545f8b;
+  background: #545f8b;
+  color: #fff;
+} */
+
 .input-check input[type="radio"]:checked::before {
   color: #fff;
 }
+
 
 #sub-tab-1 #option-1:checked:checked~.option-1,
 #sub-tab-1 #option-2:checked:checked~.option-2,
@@ -1498,156 +1537,37 @@ input:checked+section.box .box-title:before {
   transition: all 0.3s ease;
 }
 
-#checkbox_feature input[type="checkbox"] {
-  display: none;
+
+
+.input-check input[type="checkbox"] {
+  appearance: none;
+  padding: 10px 6px;
+  margin-right: 10px;
+  margin-top: 10px;
+  width: fit-content;
+  color: #000;
+  border: 2px solid lightgrey;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 13px;
+  transition: all 0.3s ease;
 }
 
-#checkbox-1:checked~.checkbox-option-1,
-#checkbox-2:checked~.checkbox-option-2,
-#checkbox-3:checked~.checkbox-option-3,
-#checkbox-4:checked~.checkbox-option-4,
-#checkbox-5:checked~.checkbox-option-5,
-#checkbox-6:checked~.checkbox-option-6,
-#checkbox-7:checked~.checkbox-option-7,
-#checkbox-8:checked~.checkbox-option-8,
-#checkbox-9:checked~.checkbox-option-9,
-#checkbox-10:checked~.checkbox-option-10,
-#checkbox-11:checked~.checkbox-option-11,
-#checkbox-12:checked~.checkbox-option-12,
-#checkbox-13:checked~.checkbox-option-13,
-#checkbox-14:checked~.checkbox-option-14,
-#checkbox-15:checked~.checkbox-option-15,
-#checkbox-16:checked~.checkbox-option-16,
-#checkbox-17:checked~.checkbox-option-17,
-#checkbox-18:checked~.checkbox-option-18,
-#checkbox-19:checked~.checkbox-option-19,
-#checkbox-20:checked~.checkbox-option-20,
-#checkbox-21:checked~.checkbox-option-21,
-#checkbox-22:checked~.checkbox-option-22,
-#checkbox-23:checked~.checkbox-option-23,
-#checkbox-24:checked~.checkbox-option-24,
-#checkbox-25:checked~.checkbox-option-25,
-#checkbox-26:checked~.checkbox-option-26,
-#checkbox-27:checked~.checkbox-option-27,
-#checkbox-28:checked~.checkbox-option-28,
-#checkbox-29:checked~.checkbox-option-29,
-#checkbox-30:checked~.checkbox-option-30,
-#checkbox-31:checked~.checkbox-option-31,
-#checkbox-32:checked~.checkbox-option-32,
-#checkbox-33:checked~.checkbox-option-33,
-#checkbox-34:checked~.checkbox-option-34,
-#checkbox-35:checked~.checkbox-option-35,
-#checkbox-36:checked~.checkbox-option-36,
-#checkbox-37:checked~.checkbox-option-37,
-#checkbox-38:checked~.checkbox-option-38,
-#checkbox-39:checked~.checkbox-option-39,
-#checkbox-40:checked~.checkbox-option-40,
-#checkbox-41:checked~.checkbox-option-41,
-#checkbox-42:checked~.checkbox-option-42,
-#checkbox-43:checked~.checkbox-option-43,
-#checkbox-44:checked~.checkbox-option-44,
-#checkbox-45:checked~.checkbox-option-45,
-#checkbox-46:checked~.checkbox-option-46,
-#checkbox-47:checked~.checkbox-option-47,
-#checkbox-48:checked~.checkbox-option-48,
-#checkbox-49:checked~.checkbox-option-49,
-#checkbox-50:checked~.checkbox-option-50,
-#checkbox-51:checked~.checkbox-option-51,
-#checkbox-52:checked~.checkbox-option-52,
-#checkbox-53:checked~.checkbox-option-53,
-#checkbox-54:checked~.checkbox-option-54,
-#checkbox-55:checked~.checkbox-option-55,
-#checkbox-56:checked~.checkbox-option-56,
-#checkbox-57:checked~.checkbox-option-57,
-#checkbox-58:checked~.checkbox-option-58,
-#checkbox-59:checked~.checkbox-option-59,
-#checkbox-60:checked~.checkbox-option-60,
-#checkbox-61:checked~.checkbox-option-61,
-#checkbox-62:checked~.checkbox-option-62,
-#checkbox-63:checked~.checkbox-option-63,
-#checkbox-64:checked~.checkbox-option-64,
-#checkbox-65:checked~.checkbox-option-65,
-#checkbox-66:checked~.checkbox-option-66,
-#checkbox-67:checked~.checkbox-option-67,
-#checkbox-68:checked~.checkbox-option-68,
-#checkbox-69:checked~.checkbox-option-69,
-#checkbox-70:checked~.checkbox-option-70,
-#checkbox-71:checked~.checkbox-option-71,
-#checkbox-72:checked~.checkbox-option-72,
-#checkbox-73:checked~.checkbox-option-73,
-#checkbox-74:checked~.checkbox-option-74,
-#checkbox-75:checked~.checkbox-option-75,
-#checkbox-76:checked~.checkbox-option-76,
-#checkbox-77:checked~.checkbox-option-77,
-#checkbox-78:checked~.checkbox-option-78,
-#checkbox-79:checked~.checkbox-option-79,
-#checkbox-80:checked~.checkbox-option-80,
-#checkbox-81:checked~.checkbox-option-81,
-#checkbox-82:checked~.checkbox-option-82,
-#checkbox-83:checked~.checkbox-option-83,
-#checkbox-84:checked~.checkbox-option-84,
-#checkbox-85:checked~.checkbox-option-85,
-#checkbox-86:checked~.checkbox-option-86,
-#checkbox-87:checked~.checkbox-option-87,
-#checkbox-88:checked~.checkbox-option-88,
-#checkbox-89:checked~.checkbox-option-89,
-#checkbox-90:checked~.checkbox-option-90,
-#checkbox-91:checked~.checkbox-option-91,
-#checkbox-92:checked~.checkbox-option-92,
-#checkbox-93:checked~.checkbox-option-93,
-#checkbox-94:checked~.checkbox-option-94,
-#checkbox-95:checked~.checkbox-option-95,
-#checkbox-96:checked~.checkbox-option-96,
-#checkbox-97:checked~.checkbox-option-97,
-#checkbox-98:checked~.checkbox-option-98,
-#checkbox-99:checked~.checkbox-option-99,
-#checkbox-100:checked~.checkbox-option-100,
-#checkbox-101:checked~.checkbox-option-101,
-#checkbox-102:checked~.checkbox-option-102,
-#checkbox-103:checked~.checkbox-option-103,
-#checkbox-104:checked~.checkbox-option-104,
-#checkbox-servent:checked~.checkbox-option-servent,
-#checkbox-Quarters:checked~.checkbox-option-Quarters,
-#checkbox-dining:checked~.checkbox-option-dining,
-#checkbox-kitchen:checked~.checkbox-option-kitchen,
-#checkbox-study:checked~.checkbox-option-study,
-#checkbox-prayer:checked~.checkbox-option-prayer,
-#checkbox-powder:checked~.checkbox-option-powder,
-#checkbox-gym:checked~.checkbox-option-gym,
-#checkbox-store:checked~.checkbox-option-store,
-#checkbox-steam:checked~.checkbox-option-steam,
-#checkbox-lounge:checked~.checkbox-option-lounge,
-#checkbox-Sitting:checked~.checkbox-option-Sitting,
-#checkbox-property_servant:checked~.checkbox-option-property_servant,
-#checkbox-property_drawing:checked~.checkbox-option-property_drawing,
-#checkbox-property_dining:checked~.checkbox-option-property_dining,
-#checkbox-property_kitchen:checked~.checkbox-option-property_kitchen,
-#checkbox-property_study:checked~.checkbox-option-property_study,
-#checkbox-property_prayer:checked~.checkbox-option-property_prayer,
-#checkbox-property_powder:checked~.checkbox-option-property_powder,
-#checkbox-property_gym:checked~.checkbox-option-property_gym,
-#checkbox-property_store:checked~.checkbox-option-property_store,
-#checkbox-property_steam:checked~.checkbox-option-property_steam,
-#checkbox-property_lounge:checked~.checkbox-option-property_lounge,
-#checkbox-property_laundry:checked~.checkbox-option-property_laundry,
-#checkbox-property_servant-1:checked~.checkbox-option-property_servant-1,
-#checkbox-property_drawing-2:checked~.checkbox-option-property_drawing-2,
-#checkbox-property_dining-3:checked~.checkbox-option-property_dining-3,
-#checkbox-property_kitchen-4:checked~.checkbox-option-property_kitchen-4,
-#checkbox-property_study-5:checked~.checkbox-option-property_study-5,
-#checkbox-property_prayer-6:checked~.checkbox-option-property_prayer-6,
-#checkbox-property_powder-7:checked~.checkbox-option-property_powder-7,
-#checkbox-property_gym-8:checked~.checkbox-option-property_gym-8,
-#checkbox-property_store-9:checked~.checkbox-option-property_store-9,
-#checkbox-property_steam-10:checked~.checkbox-option-property_steam-10,
-#checkbox-property_lounge-11:checked~.checkbox-option-property_lounge-11,
-#checkbox-property_laundry-12:checked~.checkbox-option-property_laundry-12 {
-  border-color: #545F8B;
-  background: #545F8B;
+.input-check input[type="checkbox"]::before {
+  content: attr(data-label);
+  display: block;
+  width: 100%;
+  text-align: center;
+
+}
+
+.input-check input[type="checkbox"]:checked {
+  border-color: #545f8b;
+  background: #545f8b;
   color: #fff;
+
 }
 
-/* Default styles for larger screens */
 .nav-tabs-container {
   display: flex;
   flex-wrap: nowrap;
@@ -1676,10 +1596,32 @@ input:checked+section.box .box-title:before {
   width: 100%;
 }
 
+.nav-tab-button2 {
+  margin-right: 10px;
+  background-color: transparent;
+  color: #000;
+  font-size: 13px;
+  border: 1px solid #CDD3D9;
+}
+
+.nav-tab-button2:last-child {
+  margin-right: 0;
+}
+
+.nav-tab-button2.active {
+  background: #545F8B;
+  border-color: #545F8B;
+  color: #fff;
+}
+
+#nav-post-bike2 .nav-tabs {
+  width: 100%;
+}
+
 /* Responsive styles for smaller screens */
 @media screen and (max-width: 667px) {
   .input-check input[type="radio"] {
-    width: 70%;
+    width: 100%;
     margin-top: 10px;
   }
 
@@ -1696,10 +1638,26 @@ input:checked+section.box .box-title:before {
   .nav-tab-button {
     margin-right: 0;
     margin-bottom: 5px;
-    width: 100%;
+
   }
 
   .nav-tab-button:last-child {
+    margin-bottom: 0;
+  }
+
+  #nav-post-bike2 .nav-tabs {
+    width: 70% !important;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .nav-tab-button2 {
+    margin-right: 0;
+    margin-bottom: 5px;
+
+  }
+
+  .nav-tab-button2:last-child {
     margin-bottom: 0;
   }
 }
@@ -1783,8 +1741,7 @@ input:checked+section.box .box-title:before {
 }
 
 .image-wrapper img {
-  width: 100px;
-  height: 100px;
+
   object-fit: cover;
   border: 1px solid #ccc;
   border-radius: 4px;
@@ -2065,6 +2022,7 @@ input:checked+section.box .box-title:before {
   justify-content: space-between;
   -ms-flex-align: center;
   align-items: center;
+  padding: 5px;
 
 }
 
@@ -2165,7 +2123,7 @@ input:checked+section.box .box-title:before {
 .nav>li>a {
   position: relative;
   display: block;
-  padding: 3px 10px !important;
+  padding: 3px 10px;
 }
 
 #pageMessages {

@@ -5,8 +5,8 @@
       <h1>Profile</h1>
       <nav>
         <ol class="breadcrumb">
-          <li class="breadcrumb-item"><a href="/admin/index">Home</a></li>
-          <li class="breadcrumb-item active"><a href="admin/admin_profile">Profile</a></li>
+          <li class="breadcrumb-item"><a href="{{ url('/') }}">Home</a></li>
+          <li class="breadcrumb-item active"><a href="{{ url('admin/admin_profile') }}">Profile</a></li>
         </ol>
       </nav>
     </div>
@@ -16,17 +16,14 @@
         <div class="col-xl-4">
           <div class="card">
             <div class="card-body profile-card pt-4 d-flex flex-column align-items-center">
-              <img src="{{asset('admin/assets/img/messages-3.png')}}" alt="Profile" class="rounded-circle">
+              <img src="{{asset('admin/assets/img/admin2_img.png')}}" alt="Profile" class="rounded-circle " height="120px" width="120px">
               @auth
               <h4>{{ Auth::user()->name }}</h4>
               @endauth
 
-              <div class="social-links mt-1">
-                <a href="" class="twitter"><i class="bi bi-twitter"></i></a>
-                <a href="" class="facebook"><i class="bi bi-facebook"></i></a>
-                <a href="" class="instagram"><i class="bi bi-instagram"></i></a>
-                <a href="" class="linkedin"><i class="bi bi-linkedin"></i></a>
-              </div>
+               @auth
+              <h4>{{ Auth::user()->role }}</h4>
+              @endauth
             </div>
           </div>
         </div>
@@ -41,9 +38,7 @@
                 <li class="nav-item">
                   <button class="nav-link" data-bs-toggle="tab" data-bs-target="#profile-edit">Edit Profile</button>
                 </li>
-                <li class="nav-item">
-                  <button class="nav-link" data-bs-toggle="tab" data-bs-target="#profile-settings">Settings</button>
-                </li>
+               
                 <li class="nav-item">
                   <button class="nav-link" data-bs-toggle="tab" data-bs-target="#profile-change-password">Change
                     Password</button>
@@ -73,125 +68,56 @@
                   </div>
                 </div>
                 <div class="tab-pane fade profile-edit pt-3" id="profile-edit">
-                  <form>
+                <form action="{{ route('admin.admin_profile', Auth::user()->id) }}" method="POST" enctype="multipart/form-data">
+                  @csrf
+                  @method('PUT')
+                  
+                    <!-- Profile Image Section -->
                     <div class="row mb-3">
-                      <label for="profileImage" class="col-md-4 col-lg-3 col-form-label">Profile Image</label>
-                      <div class="col-md-8 col-lg-9">
-                        <img src="{{asset('admin/assets/img/messages-3.png')}}" alt="Profile">
-                        <div class="pt-2">
-                          <a href="#" class="btn btn-primary btn-sm" title="Upload new profile image"><i
-                              class="bi bi-upload"></i></a>
-                          <a href="#" class="btn btn-danger btn-sm" title="Remove my profile image"><i
-                              class="bi bi-trash"></i></a>
+                        <label for="profileImage" class="col-md-4 col-lg-3 col-form-label">Profile Image</label>
+                        <div class="col-md-8 col-lg-9">
+                            <img src="{{ Auth::user()->profile_image ? asset('assets/images/' . Auth::user()->profile_image) : asset('admin/assets/img/admin2_img.png') }}" alt="Profile" height="80px" width="80px">
+                            <div class="pt-2">
+                                <input type="file" name="profile_image" class="form-control-file">
+                                <button type="submit" class="mt-2 border-0 rounded px-2 py-1 text-white" style="background:#545f8b" title="Upload new profile image">
+                                    <i class="bi bi-upload"></i> Upload
+                                </button>
+                                <button type="submit" name="delete_image" class=" mt-2 border-0 rounded px-2 py-1 text-white"  style="background:#545f8b" title="Remove my profile image">
+                                    <i class="bi bi-trash"></i> Delete
+                                </button>
+                            </div>
                         </div>
-                      </div>
+                    </div>
+
+                    <!-- Other Input Fields -->
+                    <div class="row mb-3">
+                        <label for="fullName" class="col-md-4 col-lg-3 col-form-label">Full Name</label>
+                        <div class="col-md-8 col-lg-9">
+                            <input name="fullName" type="text" class="form-control" id="fullName" value="{{ Auth::user()->name }}">
+                        </div>
                     </div>
 
                     <div class="row mb-3">
-                      <label for="fullName" class="col-md-4 col-lg-3 col-form-label">Full Name</label>
-                      <div class="col-md-8 col-lg-9">
-                        @auth
-                        <input name="fullName" type="text" class="form-control" id="fullName"
-                          value="{{Auth::user()->name}}">
-                        @endauth
-                      </div>
-                    </div>
-
-
-                    <div class="row mb-3">
-                      <label for="Phone" class="col-md-4 col-lg-3 col-form-label">Phone</label>
-                      <div class="col-md-8 col-lg-9">
-                        @auth
-                        <input name="phone" type="text" class="form-control" id="Phone"
-                          value="{{ Auth::user()->phone_no }}">
-                        @endauth
-                      </div>
+                        <label for="Phone" class="col-md-4 col-lg-3 col-form-label">Phone</label>
+                        <div class="col-md-8 col-lg-9">
+                            <input name="phone" type="text" class="form-control" id="Phone" value="{{ Auth::user()->phone_no }}">
+                        </div>
                     </div>
 
                     <div class="row mb-3">
-                      <label for="Email" class="col-md-4 col-lg-3 col-form-label">Email</label>
-                      <div class="col-md-8 col-lg-9">
-                        @auth
-                        <input name="email" type="email" class="form-control" id="Email"
-                          value="{{Auth::user()->email}}">
-                        @endauth
-                      </div>
-                    </div>
-
-                    <div class="row mb-3">
-                      <label for="Twitter" class="col-md-4 col-lg-3 col-form-label">Twitter Profile</label>
-                      <div class="col-md-8 col-lg-9">
-                        <input name="twitter" type="text" class="form-control" id="Twitter"
-                          value="https://twitter.com/#">
-                      </div>
-                    </div>
-
-                    <div class="row mb-3">
-                      <label for="Facebook" class="col-md-4 col-lg-3 col-form-label">Facebook Profile</label>
-                      <div class="col-md-8 col-lg-9">
-                        <input name="facebook" type="text" class="form-control" id="Facebook"
-                          value="https://facebook.com/#">
-                      </div>
-                    </div>
-
-                    <div class="row mb-3">
-                      <label for="Instagram" class="col-md-4 col-lg-3 col-form-label">Instagram Profile</label>
-                      <div class="col-md-8 col-lg-9">
-                        <input name="instagram" type="text" class="form-control" id="Instagram"
-                          value="https://instagram.com/#">
-                      </div>
-                    </div>
-
-                    <div class="row mb-3">
-                      <label for="Linkedin" class="col-md-4 col-lg-3 col-form-label">Linkedin Profile</label>
-                      <div class="col-md-8 col-lg-9">
-                        <input name="linkedin" type="text" class="form-control" id="Linkedin"
-                          value="https://linkedin.com/#">
-                      </div>
+                        <label for="Email" class="col-md-4 col-lg-3 col-form-label">Email</label>
+                        <div class="col-md-8 col-lg-9">
+                            <input name="email" type="email" class="form-control" id="Email" value="{{ Auth::user()->email }}">
+                        </div>
                     </div>
 
                     <div class="text-center">
-                      <button type="submit" class="btn btn-primary">Save Changes</button>
+                        <button type="submit" class=" border-0 rounded px-2 py-1 text-white"  style="background:#545f8b">Save Changes</button>
                     </div>
-                  </form>
-                </div>
-                <div class="tab-pane fade pt-3" id="profile-settings">
-                  <form>
+              </form>
 
-                    <div class="row mb-3">
-                      <label for="fullName" class="col-md-4 col-lg-3 col-form-label">Email Notifications</label>
-                      <div class="col-md-8 col-lg-9">
-                        <div class="form-check">
-                          <input class="form-check-input" type="checkbox" id="changesMade" checked>
-                          <label class="form-check-label" for="changesMade">
-                            Changes made to your account
-                          </label>
-                        </div>
-                        <div class="form-check">
-                          <input class="form-check-input" type="checkbox" id="newProducts" checked>
-                          <label class="form-check-label" for="newProducts">
-                            Information on new products and services
-                          </label>
-                        </div>
-                        <div class="form-check">
-                          <input class="form-check-input" type="checkbox" id="proOffers">
-                          <label class="form-check-label" for="proOffers">
-                            Marketing and promo offers
-                          </label>
-                        </div>
-                        <div class="form-check">
-                          <input class="form-check-input" type="checkbox" id="securityNotify" checked disabled>
-                          <label class="form-check-label" for="securityNotify">
-                            Security alerts
-                          </label>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="text-center">
-                      <button type="submit" class="btn btn-primary">Save Changes</button>
-                    </div>
-                  </form>
                 </div>
+                
                 <div class="tab-pane fade pt-3" id="profile-change-password">
                   <form>
                     <div class="row mb-3">
@@ -235,7 +161,7 @@
 
 
     <div class="container copyright text-center  border-top pt-2 mb-0 pb-2 ">
-      <p class="pb-0 mb-0">© 2024<span> Copyright</span> <a href="index.html" class="link"> <strong
+      <p class="pb-0 mb-0">© 2024<span> Copyright</span> <a href="{{ url('/') }}" class="link"> <strong
             class="px-1 sitename">Ads Market</strong></a><span>All
           Rights Reserved</span></p>
 

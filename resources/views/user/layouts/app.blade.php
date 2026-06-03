@@ -78,6 +78,99 @@
   });
 });
   </script>
+		<script>
+            document.addEventListener('DOMContentLoaded', () => {
+                const profileImageInput = document.getElementById('profileImageInput');
+                const imagePreview = document.getElementById('imagePreview');
+                // Real-Time Image Preview
+                profileImageInput.addEventListener('change', function () {
+                    const file = this.files[0];
+
+                    if (file && file.type.startsWith('image/')) {
+                        const reader = new FileReader();
+
+                        reader.onload = function (e) {
+                            imagePreview.src = e.target.result; // Update image preview
+                        };
+
+                        reader.readAsDataURL(file); // Read the file
+                    } else {
+                        alert('Please select a valid image file (JPEG, PNG, etc.).');
+                        profileImageInput.value = ''; // Reset file input
+                    }
+                });
+
+                
+            });
+        </script>
+        <script>
+            document.addEventListener('DOMContentLoaded', () => {
+                const deleteImageBtn = document.querySelector('.delete-image-btn');
+                const imagePreview = document.getElementById('imagePreview');
+                const defaultImagePath = '{{ asset('user-panel/assets/img/1_avatar.png') }}';
+
+                if (deleteImageBtn) {
+                    deleteImageBtn.addEventListener('click', function () {
+                        if (confirm('Are you sure you want to delete your profile image?')) {
+                            fetch('{{ route('user.deleteProfileImage') }}', {
+                                method: 'DELETE',
+                                headers: {
+                                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                                    'Content-Type': 'application/json',
+                                },
+                            })
+                                .then(response => response.json())
+                                .then(data => {
+                                    if (data.success) {
+                                        alert(data.message);
+                                        imagePreview.src = defaultImagePath; // Reset to default image
+                                        deleteImageBtn.remove(); // Remove delete button
+                                    } else {
+                                        alert('Failed to delete the image.');
+                                    }
+                                })
+                                .catch(error => {
+                                    console.error('Error:', error);
+                                    alert('An error occurred while deleting the image.');
+                                });
+                        }
+                    });
+                }
+            });
+        </script>
+        <script>
+                document.addEventListener('DOMContentLoaded', () => {
+                    // Toggle password visibility
+                    document.querySelectorAll('.toggle-password').forEach(button => {
+                        button.addEventListener('click', function () {
+                            const targetInput = document.querySelector(this.dataset.target);
+                            const icon = this.querySelector('i');
+
+                            if (targetInput.type === 'password') {
+                                targetInput.type = 'text';
+                                icon.classList.remove('fa-eye');
+                                icon.classList.add('fa-eye-slash');
+                            } else {
+                                targetInput.type = 'password';
+                                icon.classList.remove('fa-eye-slash');
+                                icon.classList.add('fa-eye');
+                            }
+                        });
+                    });
+
+                    // Validate Password Match
+                    const form = document.querySelector('form');
+                    form.addEventListener('submit', function (e) {
+                        const newPassword = document.getElementById('newPassword').value;
+                        const renewPassword = document.getElementById('renewPassword').value;
+
+                        if (newPassword !== renewPassword) {
+                            e.preventDefault();
+                            alert('New Password and Re-enter New Password must match.');
+                        }
+                    });
+                });
+        </script>
 
     </body>
 </html>

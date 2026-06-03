@@ -37,3 +37,7 @@ Naeem Ahmad
 
 - GitHub: https://github.com/naeemahmaddev426
 - LinkedIn: https://www.linkedin.com/in/naeem-ahmad-2ba783413/
+
+## Status
+
+Project completed and maintained by Naeem Ahmad.

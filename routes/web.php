@@ -1,7 +1,6 @@
 <?php
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\AuthenticatedSessionController;
 use App\Http\Controllers\post_adController;
 use App\Http\Controllers\Auth\CustomRegisteredUserController;
 use App\Http\Controllers\AdController;
@@ -9,19 +8,18 @@ use App\Http\Controllers\PostAdController;
 use App\Http\Controllers\AdsImageController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ContactController;
-use App\Http\Controllers\adshomecontroller;
+use App\Http\Controllers\AdshomeController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CategorysubController;
 use App\Http\Controllers\SubCategorytypeContoller;
 use App\Http\Controllers\MailController;
 use App\Http\Controllers\UserController;
-use App\Http\Controllers\SearchController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\GoogleController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PostCategory;
 use App\Http\Controllers\BusinessadsController;
-use Illuminate\Http\Request;
+use Illuminate\Foundation\Auth\EmailVerificationRequest;
 
 
 
@@ -29,6 +27,9 @@ use Illuminate\Http\Request;
 Route::get('send-mail', [MailController::class, 'index']);
 // home Route
 Route::get('/', [AdshomeController::class, 'index'])->name('index');
+Route::get('/dashboard', function () {
+    return redirect()->route('index');
+})->middleware(['auth'])->name('dashboard');
 //  search category Route
 // Route::get('/search', [PostCategory::class, 'search'])->name('search');
 // Search based on the general query

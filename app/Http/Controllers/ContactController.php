@@ -14,6 +14,7 @@ use App\Models\FavoriteView;
 use Illuminate\Support\Facades\Crypt;
 
 use Illuminate\Contracts\Encryption\DecryptException;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 // use App\Mail\ContactFormSubmitted;
 use Illuminate\Support\Facades\Mail;
@@ -112,14 +113,14 @@ public function adminIndex(){
     
     
 
-    public function adsall($userId)
+    public function adsall($userId = null)
 {
     try {
-        // Find the user directly by ID
-        $user = User::findOrFail($userId);
-
-        // Retrieve the ads for the user
-        $ads = Ad::where('users_id', $userId)->get();
+        // An ID is supplied from the users table; without one, show every ad.
+        $user = $userId ? User::findOrFail($userId) : null;
+        $ads = Ad::with('user')
+            ->when($userId, fn ($query) => $query->where('users_id', $userId))
+            ->get();
 
         // Calculate total views and phone views from the favorite_view table for each ad
         foreach ($ads as $ad) {

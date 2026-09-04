@@ -63,7 +63,7 @@
         <div class="admin-table">
             <div class="d-flex align-items-center justify-content-between p-3 border-bottom">
                 <h6 class="fw-bold mb-0 text-primary-custom"><i class="bi bi-clock-history me-2"></i>Recent Ads</h6>
-                <a href="{{ route('admin.user_ads') }}" class="btn btn-sm btn-outline-primary-custom">View All</a>
+                <a href="{{ route('admin.all_ads') }}" class="btn btn-sm btn-outline-primary-custom">View All</a>
             </div>
             <div class="table-responsive">
                 <table class="table">
@@ -138,7 +138,7 @@
                     <a href="{{ route('admin.adscategory') }}" class="btn btn-primary-custom btn-sm">
                         <i class="bi bi-plus-lg me-2"></i>Add Category
                     </a>
-                    <a href="{{ route('admin.user_ads') }}" class="btn btn-outline-primary-custom btn-sm">
+                    <a href="{{ route('admin.all_ads') }}" class="btn btn-outline-primary-custom btn-sm">
                         <i class="bi bi-list-ul me-2"></i>Manage Ads
                     </a>
                     <a href="{{ route('admin.user_data') }}" class="btn btn-outline-primary-custom btn-sm">

@@ -9,6 +9,7 @@ services:
       dockerfile: docker/php/Dockerfile
     container_name: adsmarket
     restart: unless-stopped
+    user: "www-data"
     working_dir: /var/www/html
     volumes:
       - .:/var/www/html

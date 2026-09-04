@@ -60,7 +60,7 @@
 
             <div class="nav-section-title mt-2">Ads Management</div>
             <nav class="nav flex-column">
-                <a class="nav-link {{ request()->routeIs('admin.user_ads') ? 'active' : '' }}" href="{{ route('admin.user_ads') }}">
+                <a class="nav-link {{ request()->routeIs('admin.all_ads', 'admin.user_ads') ? 'active' : '' }}" href="{{ route('admin.all_ads') }}">
                     <i class="bi bi-megaphone"></i> All Ads
                 </a>
                 <a class="nav-link {{ request()->routeIs('admin.adscategory') ? 'active' : '' }}" href="{{ route('admin.adscategory') }}">

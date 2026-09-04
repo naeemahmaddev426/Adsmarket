@@ -138,7 +138,7 @@
         cursor: pointer;
         }
 
-        .form-group label {
+    .form-group label {
         position: relative;
         cursor: pointer;
         }

@@ -89,13 +89,17 @@ Route::get('/user/index', function () {
     } else {
         return redirect('/admin/index');
     }
-})->name('user.index');
+})->middleware('auth')->name('user.index');
 // all data store Route
 Route::prefix('posts')->group(function () {
     Route::any('/post_ad', [post_adController::class, 'store'])->name('store');
     
 });
 Route::any('/post_ad', [post_adController::class, 'main'])->name('post_ad');
+Route::get('/post_ad/categories/{category}/subcategories', [post_adController::class, 'subcategories'])
+    ->name('post_ad.subcategories');
+Route::get('/post_ad/subcategories/{subCategory}/types', [post_adController::class, 'subcategoryTypes'])
+    ->name('post_ad.subcategory_types');
 Route::post('/toggle-like/{adId}', [PostAdController::class, 'toggleLike'])->middleware('auth')->name('toggle.like');
 //Route::post('/toggle-like/{ad}', [PostAdController::class, 'toggleLike'])->middleware('auth')->name('toggle_like');
 Route::post('/save-phone-view', [PostAdController::class, 'savePhoneView'])->middleware('auth')->name('save_phone_view');
@@ -113,7 +117,7 @@ Route::any('/contact/save', [ContactController::class, 'save'])->name('contact.s
 
 Route::any('/ads_for_bussiness', [BusinessadsController::class, 'index'])->name('ads.business');
 Route::post('/store', [BusinessadsController::class, 'store'])->name('ads-business');
-Route::get('/admin/user_data/{id}', [BusinessadsController::class, 'show'])->name('admin.user_data');
+Route::get('/admin/user_data', [BusinessadsController::class, 'show'])->name('admin.user_data');
 Route::get('/business-form-success', function ()
  { return view('business_form_success');
 })->name('business_form_success');
@@ -138,23 +142,25 @@ Route::middleware(['auth'])->group(function () {
 
 });
 //  post_ad attribute Route
-Route::get('/post_ad_attributes', [post_adController::class, 'index'])->name('post_ad_attributes');
+Route::get('/post_ad_attributes', [post_adController::class, 'index'])
+    ->middleware('auth')
+    ->name('post_ad_attributes');
 
 // admin route
 Route::get('/admin/index', function () {
-    if (Auth::check() && Auth::user()->role === 'admin') {
+    if (Auth::user()->role === 'admin') {
         return app(AdminController::class)->index();
     } else {
         return redirect('/user/index');
     }
-})->name('admin.index');
+})->middleware('auth')->name('admin.index');
 
 
 
 
 // admin all route of category
 Route::get('/admin/admin_profile', [AdminController::class, 'profile'])->name('admin.admin_profile');
-Route::put('/admin/admin_profile/{id}', [AdminController::class, 'updateUserProfile'])->name('admin.admin_profile');
+Route::put('/admin/admin_profile/', [AdminController::class, 'updateUserProfile'])->name('admin.admin_profile');
 
 
 Route::get('/admin/mobiles', [AdController::class, 'showCategory'])->name('admin.category.mobiles');
@@ -165,6 +171,9 @@ Route::get('/admin/bikes', [AdController::class, 'bike'])->name('admin.category.
 Route::get('/admin/furniture', [AdController::class, 'furniture'])->name('admin.category.furniture');
 Route::get('/admin/fashion', [AdController::class, 'fashion'])->name('admin.category.fashion');
 Route::get('/admin/contact_user_detail', [AdController::class, 'detail_contact'])->name('admin.detail_contact');
+// Keep the all-ads page separate from the user-specific ads page so named routes
+// can never try to build a URL without the required user ID.
+Route::get('/admin/user_ads', [ContactController::class, 'adsall'])->name('admin.all_ads');
 Route::get('/admin/user_ads/{userId}', [ContactController::class, 'adsall'])->name('admin.user_ads');
 Route::post('/admin/updateAdStatus', [ContactController::class, 'updateAdStatus'])->name('admin.updateAdStatus');
 

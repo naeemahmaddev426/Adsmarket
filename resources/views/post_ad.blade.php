@@ -32,20 +32,20 @@
     @endif
 
     {{-- Step indicator --}}
-    <div class="step-indicator mb-5">
-        <div class="step-item active">
+    <div class="step-indicator mb-5" id="step-indicator">
+        <div class="step-item active" id="step-1">
             <div class="step-dot">1</div>
             <div class="step-label">Choose Category</div>
         </div>
-        <div class="step-item">
+        <div class="step-item" id="step-2">
             <div class="step-dot">2</div>
             <div class="step-label">Fill Details</div>
         </div>
-        <div class="step-item">
+        <div class="step-item" id="step-3">
             <div class="step-dot">3</div>
             <div class="step-label">Add Photos</div>
         </div>
-        <div class="step-item">
+        <div class="step-item" id="step-4">
             <div class="step-dot">4</div>
             <div class="step-label">Post Ad</div>
         </div>
@@ -64,9 +64,9 @@
             <div class="col-md-4 border-end" style="background:var(--light-bg)">
                 <div class="py-2">
                     @foreach($categories as $category)
-                    <button class="border-0 w-100 text-start px-4 py-3 bg-transparent cat-btn-main d-flex align-items-center gap-3"
-                            data-cat="{{ $category->category_name }}"
-                            onclick="selectCat('{{ $category->category_name }}', this)">
+                    <button type="button" class="border-0 w-100 text-start px-4 py-3 bg-transparent cat-btn-main d-flex align-items-center gap-3"
+                            data-category-id="{{ $category->id }}"
+                            data-category-name="{{ $category->category_name }}">
                         @if($category->category_image)
                         <img src="{{ asset('/' . $category->category_image) }}" width="24" height="24" alt="" loading="lazy" class="rounded">
                         @else
@@ -134,59 +134,135 @@
 
 @push('scripts')
 <script>
-const catData = @json($categories->map(function($cat) {
-    return [
-        'name' => $cat->category_name,
-        'subs' => $cat->subcategories->map(function($sub) {
-            return [
-                'name' => $sub->sub_category_name,
-                'types' => $sub->subCategoryNameTypes->map(fn($t) => $t->sub_category_name_type)
-            ];
-        })
-    ];
-}));
+const postAdAttributesUrl = @json(route('post_ad_attributes'));
+const postAdApiBase = @json(url('/post_ad'));
 
-function selectCat(catName, btn) {
+function markStepComplete() {
+    const step1 = document.getElementById('step-1');
+    const step2 = document.getElementById('step-2');
+    if (step1) {
+        step1.classList.remove('active');
+        step1.classList.add('completed');
+        step1.querySelector('.step-dot').textContent = '✓';
+    }
+    if (step2) {
+        step2.classList.add('active');
+    }
+}
+
+function showMessage(container, message) {
+    container.innerHTML = '';
+    const wrapper = document.createElement('div');
+    wrapper.className = 'px-4 py-5 text-center text-muted';
+    wrapper.textContent = message;
+    container.appendChild(wrapper);
+}
+
+function goToAttributes(categoryId, subCategoryId, typeId = null) {
+    const query = new URLSearchParams({
+        category_id: categoryId,
+        sub_category_id: subCategoryId,
+    });
+
+    if (typeId) {
+        query.set('sub_category_type_id', typeId);
+    }
+
+    window.location.href = `${postAdAttributesUrl}?${query.toString()}`;
+}
+
+async function loadJson(url) {
+    const response = await fetch(url, { headers: { Accept: 'application/json' } });
+
+    if (!response.ok) {
+        throw new Error(`Request failed with status ${response.status}`);
+    }
+
+    return response.json();
+}
+
+async function selectCat(categoryId, categoryName, btn) {
     document.querySelectorAll('.cat-btn-main').forEach(b => b.classList.remove('selected'));
     btn.classList.add('selected');
-    document.getElementById('category_name').value = catName;
-
-    const cat = catData.find(c => c.name === catName);
     const subcatList = document.getElementById('subcat-list');
     const subtypeList = document.getElementById('subtype-list');
 
-    subtypeList.innerHTML = '<div class="px-4 py-5 text-center text-muted"><i class="bi bi-arrow-left fs-3 d-block mb-2"></i><small>Select a sub-category</small></div>';
+    showMessage(subtypeList, 'Select a sub-category');
+    showMessage(subcatList, 'Loading sub-categories…');
 
-    if (!cat || !cat.subs.length) {
-        subcatList.innerHTML = '<div class="px-4 py-5 text-center text-muted"><small>No sub-categories</small></div>';
-        return;
-    }
+    try {
+        const payload = await loadJson(`${postAdApiBase}/categories/${categoryId}/subcategories`);
+        const subCategories = payload.data || [];
 
-    subcatList.innerHTML = cat.subs.map(sub => {
-        if (sub.types.length > 0) {
-            return `<button class="subcat-btn" onclick="selectSubcat('${catName}', '${sub.name}', ${JSON.stringify(sub.types)}, this)">
-                ${sub.name} <i class="bi bi-chevron-right float-end text-muted"></i>
-            </button>`;
-        } else {
-            return `<a href="/post-ad-attributes?cat=${encodeURIComponent(catName)}&sub_cat=${encodeURIComponent(sub.name)}" class="subcat-btn">
-                ${sub.name}
-            </a>`;
+        if (!subCategories.length) {
+            showMessage(subcatList, 'No sub-categories available for this category.');
+            return;
         }
-    }).join('');
+
+        subcatList.innerHTML = '';
+        subCategories.forEach(subCategory => {
+            const button = document.createElement('button');
+            button.type = 'button';
+            button.className = 'subcat-btn';
+            button.textContent = subCategory.sub_category_name;
+            button.addEventListener('click', () => selectSubcat(
+                categoryId,
+                categoryName,
+                subCategory.id,
+                subCategory.sub_category_name,
+                button
+            ));
+            subcatList.appendChild(button);
+        });
+    } catch (error) {
+        console.error('Unable to load sub-categories.', error);
+        showMessage(subcatList, 'Unable to load sub-categories. Please try again.');
+    }
 }
 
-function selectSubcat(catName, subName, types, btn) {
+async function selectSubcat(categoryId, categoryName, subCategoryId, subCategoryName, btn) {
     document.querySelectorAll('.subcat-btn').forEach(b => b.classList.remove('selected'));
     btn.classList.add('selected');
-    document.getElementById('sub_category_name').value = subName;
-
     const subtypeList = document.getElementById('subtype-list');
-    subtypeList.innerHTML = types.map(type =>
-        `<a href="/post-ad-attributes?cat=${encodeURIComponent(catName)}&sub_cat=${encodeURIComponent(subName)}&sub_cat_type=${encodeURIComponent(type)}" class="subtype-btn">
-            ${type}
-        </a>`
-    ).join('');
+    showMessage(subtypeList, 'Loading types…');
+
+    try {
+        const payload = await loadJson(`${postAdApiBase}/subcategories/${subCategoryId}/types`);
+        const types = payload.data || [];
+        subtypeList.innerHTML = '';
+
+        if (!types.length) {
+            showMessage(subtypeList, 'No types available for this sub category.');
+            const continueButton = document.createElement('button');
+            continueButton.type = 'button';
+            continueButton.className = 'subtype-btn';
+            continueButton.textContent = 'Continue with this sub-category';
+            continueButton.addEventListener('click', () => goToAttributes(categoryId, subCategoryId));
+            subtypeList.appendChild(continueButton);
+            return;
+        }
+
+        types.forEach(type => {
+            const button = document.createElement('button');
+            button.type = 'button';
+            button.className = 'subtype-btn';
+            button.textContent = type.sub_category_name_type;
+            button.addEventListener('click', () => goToAttributes(categoryId, subCategoryId, type.id));
+            subtypeList.appendChild(button);
+        });
+    } catch (error) {
+        console.error('Unable to load types.', error);
+        showMessage(subtypeList, 'Unable to load types. Please try again.');
+    }
 }
+
+document.querySelectorAll('.cat-btn-main').forEach(button => {
+    button.addEventListener('click', () => selectCat(
+        button.dataset.categoryId,
+        button.dataset.categoryName,
+        button
+    ));
+});
 </script>
 @endpush
 

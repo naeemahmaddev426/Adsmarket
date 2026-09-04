@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('sub_category_name_type');
 
             $table->foreign('category_id')->references('id')->on('categories')->onDelete('cascade');
-            $table->foreign('sub_category_id')->references('id')->on('subcategories')->onDelete('cascade');
+            $table->foreign('sub_category_id')->references('id')->on('sub_categories')->onDelete('cascade');
 
             $table->timestamps();
         });

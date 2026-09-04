@@ -12,6 +12,8 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Auth\Notifications\VerifyEmail;
 use Illuminate\Notifications\Messages\MailMessage;
+use App\Socialite\GoogleProvider;
+use Laravel\Socialite\Facades\Socialite;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -20,6 +22,21 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        // Socialite 5.31 still uses Google's legacy v4 token URL. Keep the
+        // package's normal OAuth flow, but send the code exchange to Google's
+        // documented current token endpoint.
+        Socialite::extend('google', function ($app) {
+            $config = $app['config']->get('services.google');
+
+            return (new GoogleProvider(
+                $app['request'],
+                $config['client_id'],
+                $config['client_secret'],
+                $config['redirect'],
+                $config['guzzle'] ?? []
+            ))->scopes($config['scopes'] ?? []);
+        });
+
         Blade::component('app-user-layout', UserLayout::class);
         Blade::component('app-admin-layout', AdminLayout::class);
         VerifyEmail::toMailUsing(function (object $notifiable, string $url) {
@@ -57,4 +74,3 @@ class AppServiceProvider extends ServiceProvider
     }
     
 }
-

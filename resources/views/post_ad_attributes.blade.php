@@ -14,6 +14,75 @@
 			display: block;
 		}
 
+		/* Step indicator styles for post_ad_attributes */
+		.step-indicator {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			gap: 0;
+		}
+		.step-item {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			position: relative;
+			flex: 1;
+		}
+		.step-item:not(:last-child)::after {
+			content: '';
+			position: absolute;
+			top: 18px;
+			left: 50%;
+			width: 100%;
+			height: 2px;
+			background: #dee2e6;
+			z-index: 0;
+		}
+		.step-item.completed:not(:last-child)::after,
+		.step-item.active:not(:last-child)::after {
+			background: var(--primary, #1a3c6e);
+		}
+		.step-dot {
+			width: 36px;
+			height: 36px;
+			border-radius: 50%;
+			background: #dee2e6;
+			color: #aaa;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			font-weight: 700;
+			font-size: 14px;
+			position: relative;
+			z-index: 1;
+		}
+		.step-item.active .step-dot {
+			background: var(--primary, #1a3c6e);
+			color: #fff;
+		}
+		.step-item.completed .step-dot {
+			background: #28a745;
+			color: #fff;
+		}
+		.step-label {
+			font-size: 12px;
+			margin-top: 6px;
+			color: #aaa;
+			text-align: center;
+		}
+		.step-item.active .step-label {
+			color: var(--primary, #1a3c6e);
+			font-weight: 600;
+		}
+		.step-item.completed .step-label {
+			color: #28a745;
+			font-weight: 600;
+		}
+		.step-item.completed a .step-dot,
+		.step-item.completed a .step-label {
+			color: inherit;
+		}
+
 		.is-invalid {
 			border-color: #dc3545;
 			/* Red color for invalid input */
@@ -96,10 +165,35 @@
 
 	<button onclick="topFunction()" class="custom-fixed-button float-end me-3" id="myBtn" title="Go to top"
 		style="display: none;"><i class="fas fa-arrow-up"></i></button>
+
+	{{-- Step Indicator --}}
+	<div class="container py-4" style="max-width:900px">
+		<div class="step-indicator mb-2">
+			<div class="step-item completed">
+				<a href="{{ url('/post_ad') }}" class="text-decoration-none">
+					<div class="step-dot">✓</div>
+					<div class="step-label">Choose Category</div>
+				</a>
+			</div>
+			<div class="step-item active">
+				<div class="step-dot">2</div>
+				<div class="step-label">Fill Details</div>
+			</div>
+			<div class="step-item">
+				<div class="step-dot">3</div>
+				<div class="step-label">Add Photos</div>
+			</div>
+			<div class="step-item">
+				<div class="step-dot">4</div>
+				<div class="step-label">Post Ad</div>
+			</div>
+		</div>
+	</div>
+
 	<div class="container-fluid" id="main-container">
 		<div class="row">
 
-			<div class="col-lg-12 col-12 col-md-12 mx-auto mb-5">
+			<div class="col-lg-12 col-12 col-md-12 mx-auto mb-2">
 				<div class="top-bar bg-light pb-2">
 					<div class="logo">
 						<a href="{{ url('/post_ad') }}" class="home-link me-4 text-decoration-none text-dark">
@@ -140,9 +234,11 @@
 						@endif
 					<form method="POST" action="{{ route('store') }}" enctype="multipart/form-data" id="imageForm">
 						@csrf
-						<input type="hidden" name="category_name" value="{{ $cat }}">
-						<input type="hidden" name="sub_category_name" value="{{$sub_cat}}">
-						<input type="hidden" name="sub_category_name_type" value="{{$sub_cat_type}}">
+						<input type="hidden" name="category_id" value="{{ $category->id }}">
+						<input type="hidden" name="sub_category_id" value="{{ $subCategory->id }}">
+						@if($subCategoryType)
+						<input type="hidden" name="sub_category_type_id" value="{{ $subCategoryType->id }}">
+						@endif
 						@auth
 						<input type="hidden" name="users_id" value="{{ auth()->user()->id }}">
 						@endauth

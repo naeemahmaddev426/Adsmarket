@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 use App\Models\Category;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
 use App\Models\Ad;
 
 use Illuminate\Support\Facades\Auth;
@@ -15,22 +16,68 @@ use App\Models\SubCategoryNameType;
 use App\Models\SubCategory;
 use App\Notifications\AdUpdatedOrCreated;
 use Illuminate\Support\Facades\Crypt;
+use Illuminate\Validation\Rule;
 use Intervention\Image\Facades\Image;
 
 class post_adController extends Controller
 {
     public function index(Request $request)
 {
-    $cat = $request->query('cat');
-    $sub_cat = $request->query('sub_cat');
-    $sub_cat_type = $request->query('sub_cat_type');
+    $validated = $request->validate([
+        'category_id' => ['required', 'integer', Rule::exists('categories', 'id')],
+        'sub_category_id' => ['required', 'integer', Rule::exists('sub_categories', 'id')],
+        'sub_category_type_id' => ['nullable', 'integer', Rule::exists('sub_category_name_type', 'id')],
+    ]);
+
+    $category = Category::findOrFail($validated['category_id']);
+    $subCategory = $category->subcategories()
+        ->findOrFail($validated['sub_category_id']);
+    $subCategoryType = null;
+
+    if (! empty($validated['sub_category_type_id'])) {
+        $subCategoryType = $subCategory->subCategoryNameTypes()
+            ->findOrFail($validated['sub_category_type_id']);
+    }
+
+    $cat = $category->category_name;
+    $sub_cat = $subCategory->sub_category_name;
+    $sub_cat_type = $subCategoryType?->sub_category_name_type;
     $subCategories = SubCategory::all();
     $subCategoryNameTypes = SubCategoryNameType::all();
     // Logging query parameters for debugging
     Log::info('Query parameters: ', $request->all());
 
-    return view('post_ad_attributes', compact('cat', 'sub_cat', 'sub_cat_type','subCategories','subCategoryNameTypes'));
+    return view('post_ad_attributes', compact(
+        'cat',
+        'sub_cat',
+        'sub_cat_type',
+        'category',
+        'subCategory',
+        'subCategoryType',
+        'subCategories',
+        'subCategoryNameTypes'
+    ));
 }
+
+    /** Return only the sub-categories belonging to the selected category. */
+    public function subcategories(Category $category): JsonResponse
+    {
+        return response()->json([
+            'data' => $category->subcategories()
+                ->orderBy('sub_category_name')
+                ->get(['id', 'sub_category_name']),
+        ]);
+    }
+
+    /** Return only the types belonging to the selected sub-category. */
+    public function subcategoryTypes(SubCategory $subCategory): JsonResponse
+    {
+        return response()->json([
+            'data' => $subCategory->subCategoryNameTypes()
+                ->orderBy('sub_category_name_type')
+                ->get(['id', 'sub_category_name_type']),
+        ]);
+    }
 
 
     public function create()
@@ -44,7 +91,7 @@ class post_adController extends Controller
     
     public function main()
     {
-        $categories = Category::all(); // Fetch all categories
+        $categories = Category::with('subcategories.subCategoryNameTypes')->get();
         return view('post_ad', compact('categories'));
     }
 public function store(Request $request)
@@ -64,6 +111,9 @@ public function store(Request $request)
         $validatedData = $request->validate([
             'title' => 'required|string|max:255',
             'description' => 'required|string',
+            'category_id' => ['required', 'integer', Rule::exists('categories', 'id')],
+            'sub_category_id' => ['required', 'integer', Rule::exists('sub_categories', 'id')],
+            'sub_category_type_id' => ['nullable', 'integer', Rule::exists('sub_category_name_type', 'id')],
             'category_name' => 'nullable|string|max:255',
             'sub_category_name' => 'nullable|string|max:255',
             'sub_category_name_type' => 'nullable|string|max:255',
@@ -117,6 +167,22 @@ public function store(Request $request)
             'deliverable' => 'nullable|string|max:255',
             'image_path.*' => 'required|image|mimes:jpeg,png,jpg,gif,svg,jfif,webp',
         ]);
+
+        // Derive display names from the selected IDs. This prevents a request from
+        // posting a type that belongs to a different sub-category or category.
+        $category = Category::findOrFail($validatedData['category_id']);
+        $subCategory = $category->subcategories()
+            ->findOrFail($validatedData['sub_category_id']);
+        $subCategoryType = null;
+
+        if (! empty($validatedData['sub_category_type_id'])) {
+            $subCategoryType = $subCategory->subCategoryNameTypes()
+                ->findOrFail($validatedData['sub_category_type_id']);
+        }
+
+        $validatedData['category_name'] = $category->category_name;
+        $validatedData['sub_category_name'] = $subCategory->sub_category_name;
+        $validatedData['sub_category_name_type'] = $subCategoryType?->sub_category_name_type;
         $phoneNo = $request->input('phone_no');
             if ($phoneNo && !str_starts_with($phoneNo, '+92')) {
                 $phoneNo = '+92' . $phoneNo;

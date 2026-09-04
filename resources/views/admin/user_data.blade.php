@@ -54,7 +54,7 @@
                         <td class="small text-muted">{{ $user->created_at->format('d M Y') }}</td>
                         <td>
                             <div class="d-flex gap-2">
-                                <a href="{{ route('admin.user_ads', ['user_id' => $user->id]) }}"
+                                <a href="{{ route('admin.user_ads', ['userId' => $user->id]) }}"
                                    class="btn btn-sm btn-outline-primary-custom" title="View Ads">
                                     <i class="bi bi-megaphone"></i>
                                 </a>

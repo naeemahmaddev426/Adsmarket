@@ -7,8 +7,6 @@
             display: none;
         }
         /* .select {
-            cursor:pointer;
-            display:inline-block;
             position:relative;
             font:normal 11px/22px Arial, Sans-Serif;
             color:black;

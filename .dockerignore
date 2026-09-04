@@ -1,0 +1,51 @@
+# Git
+.git
+.gitignore
+.gitattributes
+
+# Dependencies (installed during build)
+vendor
+node_modules
+
+# Build artifacts
+public/build
+public/hot
+
+# Storage (mounted as volume)
+storage/framework/cache/data/*
+storage/framework/sessions/*
+storage/framework/views/*
+storage/logs/*
+
+# Docker files (not needed inside container)
+docker-compose.yml
+docker-compose.*.yml
+Makefile
+
+# Docs
+*.md
+README*
+
+# Environment files (injected at runtime)
+.env
+.env.*
+!.env.example
+
+# IDE files
+.vscode
+.idea
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Tests (optional - remove if you want tests in container)
+tests/
+
+# Large public assets that don't need to be in PHP container
+# (nginx serves them directly from the bind mount)
+public/uploads
+public/assets/swiper
+public/admin/assets/vendor

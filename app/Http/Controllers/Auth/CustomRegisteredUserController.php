@@ -16,7 +16,12 @@ use App\Mail\VerifyEmail;
 
 class CustomRegisteredUserController extends Controller
 {
-   public function store(Request $request)
+    public function create()
+    {
+        return view('auth.register');
+    }
+
+    public function store(Request $request)
 {
     // Check if the user is registering normally or via Google
     $isGoogleLogin = $request->has('google_token'); // Adjust this to how you identify Google login
